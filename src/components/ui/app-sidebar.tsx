@@ -16,48 +16,40 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-// Menu items.
-const items = [
-  {
-    title: 'Restaurants',
-    url: '/restaurants',
-    icon: Home,
-  },
-  {
-    title: 'Orders',
-    url: '/orders',
-    icon: Inbox,
-  },
-  {
-    title: 'Settings',
-    url: '/settings',
-    icon: Settings,
-  },
-];
+interface MenuItem {
+  title: string;
+  url: string;
+  icon?: any;
+}
 
-export function AppSidebar() {
-  const [activeButton, setActiveButton] = useState<string | null>("Restaurants"); // Track the active menu item's title
+interface AppSidebarProps {
+  MenuItems: MenuItem[];
+}
+
+export function AppSidebar({ MenuItems }: AppSidebarProps) {
+  console.log('MenuItems:', MenuItems); // Debugging
+
+  const [activeButton, setActiveButton] = useState<string | null>('Restaurants');
   const activeButtonStyle =
     'bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))] rounded-md';
   const handleButtonClick = (title: string) => {
-    setActiveButton(title); // Set the clicked menu item as active
+    setActiveButton(title);
   };
 
   return (
-    <Sidebar className='fixed '>
+    <Sidebar className="fixed">
       <SidebarContent>
         <SidebarGroup>
           <Image src={Logo} alt="Logo" className="h-20 object-cover" />
           <SidebarGroupContent>
             <SidebarMenu className="pb-4">
-              {items.map((item) => (
+              {MenuItems.map((item) => (
                 <SidebarMenuItem
                   key={item.title}
                   onClick={() => handleButtonClick(item.title)}
                   className={activeButton === item.title ? activeButtonStyle : ''}
                 >
                   <SidebarMenuButton asChild>
-                    {/* Use Link component here */}
                     <Link href={item.url} className="flex items-center gap-2">
                       <item.icon />
                       <span>{item.title}</span>

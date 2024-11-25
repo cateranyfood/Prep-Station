@@ -1,10 +1,11 @@
-// layout.tsx
+// app/layout.tsx
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
 import localFont from "next/font/local";
 import "./globals.css";
-import AuthWrapper from "@/components/AuthWrapper";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import SignIn from "@/components/SignIn";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+
   return (
     <ClerkProvider>
       <html lang="en">
@@ -36,7 +38,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             enableSystem
             disableTransitionOnChange
           >
-            <AuthWrapper>{children}</AuthWrapper>
+            <SignedOut>
+              <SignIn />
+            </SignedOut>
+            <SignedIn>
+              <main>
+                {children}
+              </main>
+            </SignedIn>
           </ThemeProvider>
         </body>
       </html>

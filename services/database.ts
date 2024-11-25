@@ -13,7 +13,17 @@ interface RestaurantInfo {
     restaurant_phone_number: string;
     restaurant_photo?: string;
     restaurant_owner: string;
-  }
+}
+
+/**
+ * The function `addUserToDatabaseAdmin` inserts user information into a database table using Supabase
+ * Admin.
+ * @param {userInfo} userInfo - The `userInfo` parameter is an object containing information about a
+ * user. It includes the following properties:
+ * @returns The function `addUserToDatabaseAdmin` is returning either the `data` object if the user was
+ * successfully inserted into the database, or the `error` object if there was an error adding the user
+ * to the database.
+ */
 export async function addUserToDatabaseAdmin(userInfo:userInfo) {
     const { user_id, email, first_name, last_name } = userInfo;
     const {data, error} = await supabaseAdmin.from("users").insert([
@@ -34,6 +44,16 @@ export async function addUserToDatabaseAdmin(userInfo:userInfo) {
     return data;
 }
 
+/**
+ * This TypeScript function adds restaurant information to a database using Supabase and returns the
+ * inserted record.
+ * @param {RestaurantInfo} restaurantInfo - The `restaurantInfo` parameter is an object that contains
+ * information about a restaurant. It includes the following properties:
+ * @returns The function `addRestaurantToDatabase` is returning the inserted restaurant's record if the
+ * insertion was successful. If there is an error during the insertion process, it will throw an error
+ * with the error message to handle it in the calling function. If there is no data returned from the
+ * database unexpectedly, it will throw an error indicating that.
+ */
 export async function addRestaurantToDatabase(restaurantInfo:RestaurantInfo) {
     const { restaurant_owner, restaurant_name, address, restaurant_phone_number, restaurant_photo } = restaurantInfo;
     console.log(restaurantInfo);
@@ -51,6 +71,14 @@ export async function addRestaurantToDatabase(restaurantInfo:RestaurantInfo) {
       throw new Error('Unexpected error: No data returned from database.');
 }
 
+/**
+ * This TypeScript function retrieves restaurants owned by a specific owner using Supabase and returns
+ * the data.
+ * @param {string} ownerId - The `ownerId` parameter in the `getRestaurantsByOwner` function is a
+ * string that represents the unique identifier of the owner whose restaurants you want to retrieve.
+ * This function fetches restaurants from a database table based on the provided `ownerId`.
+ * @returns An array of restaurants that belong to the owner with the specified ownerId.
+ */
 export async function getRestaurantsByOwner(ownerId: string) {
   const { data, error } = await supabaseAdmin
     .from('restaurants') // The name of your table
