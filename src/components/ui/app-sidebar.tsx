@@ -33,7 +33,8 @@ const iconMap: Record<string, any> = {
   arrowLeft: require("lucide-react").ArrowLeft,
   circleGauge: require("lucide-react").CircleGauge,
   logs: require("lucide-react").Logs,
-  clockArrowUp: require("lucide-react").ClockArrowUp
+  clockArrowUp: require("lucide-react").ClockArrowUp,
+  pencil: require("lucide-react").Pencil,
 };
 
 export function AppSidebar({ MenuItems, defaultItem }: AppSidebarProps) {

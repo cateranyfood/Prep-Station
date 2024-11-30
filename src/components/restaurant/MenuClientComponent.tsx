@@ -3,13 +3,7 @@ import React, { useState } from 'react';
 import AddMenuItemModal from './AddMenuItemModal';
 import MenuItemCard from './MenuItemCard';
 import MenuItemDetailsModal from './MenuItemDetailsModal';
-
-interface MenuItem {
-  image_url: string;
-  item_name: string;
-  item_price: number;
-  item_description: string;
-}
+import { MenuItem } from '../../types';
 
 export default function MenuClientComponent({
   restaurantId,
@@ -51,10 +45,11 @@ export default function MenuClientComponent({
                 className="cursor-pointer"
               >
                 <MenuItemCard
-                  imageURL={item.image_url}
-                  name={item.item_name}
-                  price={item.item_price}
-                  description={item.item_description}
+                  item_id={item.item_id}
+                  image_url={item.image_url}
+                  item_name={item.item_name}
+                  item_price={item.item_price}
+                  item_description={item.item_description}
                 />
               </div>
             ))

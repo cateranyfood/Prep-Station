@@ -1,43 +1,73 @@
-import React from "react";
-import { Modal } from "../Modal";
-
-interface MenuItem {
-  image_url: string;
-  item_name: string;
-  item_price: number;
-  item_description: string;
-}
-
+// components/MenuItemDetailsModal.tsx
+import React, { useState } from 'react';
+import { Modal } from '../Modal';
+import MenuItemView from './MenuItemView';
+import MenuItemEditForm from './MenuItemEditForm';
+import { MenuItem } from '../../types';
+import { updateMenuItemInDatabaseAdmin } from '../../../services/database';
 interface MenuItemDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   item: MenuItem | null;
+  onSave?: (updatedItem: MenuItem) => void;
 }
 
-export default function MenuItemDetailsModal({
+const MenuItemDetailsModal: React.FC<MenuItemDetailsModalProps> = ({
   isOpen,
   onClose,
   item,
-}: MenuItemDetailsModalProps) {
+  onSave,
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+
   if (!item) return null;
 
-  const modalHeight = "600px"; // Set the height of the modal and image
+  const modalHeight = '600px';
+
+  const handleSave = async (updatedItem: MenuItem) => {
+    try {
+      // Await the update operation
+      await updateMenuItemInDatabaseAdmin(updatedItem);
+  
+      // Update the parent component if onSave is provided
+      if (onSave) {
+        onSave(updatedItem);
+      }
+  
+      // Exit edit mode
+      setIsEditing(false);
+  
+      // Optionally, close the modal
+      // onClose();
+    } catch (error) {
+      console.error('Error updating menu item:', error);
+      // Optionally, display an error message to the user
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div
-        className="flex bg-zinc-800 rounded-lg shadow-lg "
+        className="flex bg-zinc-800 rounded-lg shadow-lg relative"
         style={{
-          width: "100%", // Adjust modal width as needed
-          maxWidth: "1200px",
-          height: modalHeight, // Match modal height to the image
+          width: '100%',
+          maxWidth: '1200px',
+          height: modalHeight,
         }}
       >
         {/* Image Section */}
-        {item.image_url ? (
+        {item.image_url && (
           <div
-            className="flex items-center justify-center bg-zinc-800  rounded-l-lg"
-            style={{ width: "50%", height: modalHeight }}
+            className="flex items-center justify-center bg-zinc-800 rounded-l-lg"
+            style={{ width: '50%', height: modalHeight }}
           >
             <img
               src={item.image_url}
@@ -45,22 +75,24 @@ export default function MenuItemDetailsModal({
               className="object-cover aspect-square w-[90%] rounded-lg"
             />
           </div>
-        ) : (
-          <></>
         )}
 
         {/* Details Section */}
         <div
           className={`${
-            item.image_url ? "w-1/2" : "w-full"
-          } p-8 text-white overflow-y-auto`}
+            item.image_url ? 'w-1/2' : 'w-full'
+          } p-8 text-white overflow-y-auto relative`}
           style={{ height: modalHeight }}
         >
-          <h2 className="text-5xl font-bold mb-2">{item.item_name}</h2>
-          <p className="text-2xl font-semibold mb-6">${item.item_price}</p>
-          <p className="text-lg text-gray-300 mb-6">{item.item_description}</p>
+          {isEditing ? (
+            <MenuItemEditForm item={item} onSave={handleSave} onCancel={handleCancel} />
+          ) : (
+            <MenuItemView item={item} onEditClick={handleEditClick} />
+          )}
         </div>
       </div>
     </Modal>
   );
-}
+};
+
+export default MenuItemDetailsModal;

@@ -15,7 +15,8 @@ interface RestaurantInfo {
 }
 
 interface MenuItemInfo {
-  restaurant_id: string;
+  item_id?: string; // or item_id: string; depending on your database schema
+  restaurant_id?: string;
   item_name: string;
   item_price: number;
   item_description?: string;
@@ -186,7 +187,7 @@ export async function getMenuItemsByRestaurantId(restaurantId: string) {
     console.error("Error fetching menu items:", error);
     return null;
   }
-
+  console.log("Fetched menu items:", data);
   return data;
 }
 
@@ -228,4 +229,35 @@ export async function uploadFileToSupabase(file: File, bucketName: string): Prom
     console.error('Unexpected error:', error);
     return null;
   }
+}
+
+export async function updateMenuItemInDatabaseAdmin(itemInfo: MenuItemInfo) {
+  // Prepare the data for updating
+  const updateData: Partial<MenuItemInfo> = {
+    item_name: itemInfo.item_name,
+    item_price: itemInfo.item_price,
+    item_description: itemInfo.item_description,
+  };
+
+  // Remove undefined fields to avoid overwriting existing data
+  Object.keys(updateData).forEach(
+    (key) =>
+      updateData[key as keyof MenuItemInfo] === undefined &&
+      delete updateData[key as keyof MenuItemInfo]
+  );
+
+  // Perform the update operation
+  const { data, error } = await supabaseAdmin
+    .from('menu') // Your table name
+    .update(updateData)
+    .eq('item_id', itemInfo.item_id) // Use 'item_id' if that's your primary key
+    .select();
+
+  if (error) {
+    console.error('Error updating menu item in database:', error);
+    return null;
+  }
+
+  console.log('Menu item updated in database:', data);
+  return data;
 }
