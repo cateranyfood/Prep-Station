@@ -6,6 +6,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import SignIn from "@/components/SignIn";
+import QueryProviders from "@/features/shared/provider/Tanstack";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,30 +26,31 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
-        >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
+    <QueryProviders>
+      <ClerkProvider>
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
           >
-            <SignedOut>
-              <SignIn />
-            </SignedOut>
-            <SignedIn>
-              <main>
-                {children}
-              </main>
-            </SignedIn>
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <SignedOut>
+                <SignIn />
+              </SignedOut>
+              <SignedIn>
+                <main>
+                  {children}
+                </main>
+              </SignedIn>
+            </ThemeProvider>
+          </body>
+        </html>
+      </ClerkProvider>
+    </QueryProviders>
   );
 }
